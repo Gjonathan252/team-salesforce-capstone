@@ -5,9 +5,18 @@ const bodyParser = require('body-parser');
 // require('dotenv/config');
 const dotenv = require('dotenv');
 const postRoute = require('./routes/userposts');
+const path = require('path');
 
+//CONNECT TO DIR PATH INDEX.HTML
+app.use('/public', express.static(path.join(__dirname, 'static')));
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'static', 'index.html'));
+});
 //Parsing JSON
 app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }))
+// const { urlencoded } = require('body-parser');
+// app.use(bodyParser, urlencoded({ extended: false }));
 
 //import Routes
 const postRoutes = require('./routes/posts');
@@ -22,12 +31,14 @@ app.use('/statuses', statusRoutes);
 const orderRoutes = require('./routes/orders');
 app.use('/orders', orderRoutes);
 
-const seatRoutes = require('./routes/seats');
-app.use('/seats', seatRoutes);
-
 const authRoute = require('./routes/auth');
 
+app.use('/api/user', authRoute);
+app.use('/api/posts', postRoute);
 
+
+// const tableRoutes = require('./routes/tables');
+// app.use('/tables', tableRoutes);
 //Routes
 app.get('/', (req, res) => {
     res.send('We are on home');
@@ -44,10 +55,6 @@ mongoose.connect(
 
 //Middleware
 app.use(express.json());
-
-//Routes Middlewares
-app.use('/api/user', authRoute);
-app.use('/api/posts', postRoute);
 
 // start listening
 app.listen(3000, () => console.log('Server up and running port:3000'));

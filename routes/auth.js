@@ -3,7 +3,10 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { registerValidation, loginValidation } = require('../validation');
+const path = require('path');
+const bodyParser = require('body-parser');
 
+//register
 router.post('/register', async (req, res) => {
     //Validate befor use
     const { error } = registerValidation(req.body);
@@ -49,7 +52,8 @@ router.post('/login', async (req, res) => {
 
     //Create and assign a token
     const token = jwt.sign({ _id: user._id }, process.env.Token_SECRET);
-    res.header('auth-token', token).send(token);
+    res.header('auth-token', token);
+    if (!error) res.redirect('/public/index.html');
 });
 
 module.exports = router;
